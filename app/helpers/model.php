@@ -88,36 +88,57 @@ class Model extends Database
     protected function getListPluginsFromDir(): ?array
     {
         $pluginsPath = $_SERVER['DOCUMENT_ROOT'].'/plugins';
-        var_dump($pluginsPath);
 
         if(!is_dir($pluginsPath)) return null;
 
-        $listPlugins = scandir($pluginsPath);
-        if($listPlugins === false) return null;
+        $listFiles = scandir($pluginsPath);
+        if($listFiles === false) return null;
 
-        $listPlugins = array_slice($listPlugins, 2);
-
-        var_dump($listPlugins);
+        $listFiles = array_slice($listFiles, 2);
 
         $plugins = [];
 
-        foreach ($listPlugins as $plugin) {
-            $dirPath = $pluginsPath.'/'.$plugin;
+        foreach ($listFiles as $file) {
+            $dirPath = $pluginsPath.'/'.$file;
             if(!is_dir($dirPath)) continue;
 
-            $pluginConfigPath = $pluginsPath.'/'.$plugin.'/config.json';
+            $pluginConfigPath = $pluginsPath.'/'.$file.'/config.json';
             if(!file_exists($pluginConfigPath)) continue;
 
             $configJson = json_decode(file_get_contents($pluginConfigPath), true);
             if(
                 !isset($configJson['tech_name']) ||
                 !isset($configJson['name']) ||
-                !isset($configJson['version'])
+                !isset($configJson['version']) ||
+                !isset($configJson['settings'])
             ) continue;
+
+            $configJson['dir'] = $file;
 
             $plugins[] = $configJson;
         }
-        var_dump($plugins);
+
         return $plugins;
+    }
+
+    /**
+     * Проверить строку с флагами доступа на валидность.
+     *
+     * @param string $flags
+     * @return string|bool
+     */
+    protected function checkValidStringFlags(string $flags): string|bool
+    {
+        // Проверяем, что строка состоит только из английских букв
+        if (!preg_match('/^[a-z]+$/', $flags)) {
+            return "Флаги могут состоять только из букв английского алфавита нижнего регистра.";
+        }
+
+        $letters = str_split($flags);
+        if(count($letters) !== count(array_unique($letters))) {
+            return "Флаги не должны повторяться.";
+        }
+
+        return true;
     }
 }

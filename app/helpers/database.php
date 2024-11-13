@@ -220,10 +220,73 @@ class Database
                 }
             }
         } catch (PDOException $e) {
-            error_log("ERROR: selectAdmins" . $e->getMessage());
+            error_log("ERROR: selectPlugins" . $e->getMessage());
             return null;
         }
 
         return $plugins;
+    }
+
+    /**
+     * Получает плагин по его техническому названию.
+     *
+     * @param string $techName
+     * @return array|null
+     */
+    public static function selectPluginByTechName(string $techName): ?array
+    {
+        try {
+            $stmt = self::pdo()->prepare("SELECT * FROM WP_Modules WHERE techName = :techName");
+            $stmt->bindValue(":techName", $techName);
+            $stmt->execute();
+
+            $plugin = [];
+            if ($stmt->rowCount()) {
+                $plugin = $stmt->fetch(PDO::FETCH_ASSOC);
+                $plugin['settings'] = json_decode($plugin['settings'], true);
+            }
+        } catch (PDOException $e) {
+            error_log("ERROR: selectPluginByTechName" . $e->getMessage());
+            return null;
+        }
+
+        return $plugin;
+    }
+
+    public static function insertPlugin(string $techName, string $name, string $version, string $settings): ?int
+    {
+        try {
+            $stmt = self::pdo()->prepare('INSERT INTO WP_Modules(techName,name,version,settings) VALUES (:techName, :name, :version, :settings)');
+            $stmt->bindValue(":techName", $techName);
+            $stmt->bindValue(":name", $name);
+            $stmt->bindValue(":version", $version);
+            $stmt->bindValue(":settings", $settings);
+            $stmt->execute();
+
+            return self::pdo()->lastInsertId();
+        } catch (PDOException $e) {
+            error_log("ERROR: insertPlugin" . $e->getMessage());
+        }
+
+        return null;
+    }
+
+    public static function selectPluginById(int $id): ?array
+    {
+        try {
+            $stmt = self::pdo()->prepare("SELECT * FROM WP_Modules WHERE id = :id");
+            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $plugin = [];
+            if ($stmt->rowCount()) {
+                $plugin = $stmt->fetch(PDO::FETCH_ASSOC);
+            }
+        } catch (PDOException $e) {
+            error_log("ERROR: selectPluginById" . $e->getMessage());
+            return null;
+        }
+
+        return $plugin;
     }
 }

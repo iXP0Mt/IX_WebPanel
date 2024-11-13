@@ -23,15 +23,15 @@ class Controller_Admins extends Controller
     {
         $this->model->forceValidateGet();
 
+        $data['content']['error_msg'] = $this->model->flashErrorMessage();
+        $data['content']['success_msg'] = $this->model->flashSuccessMessage();
+
         $listAdmins = $this->model->getListAdmins($_GET['page']);
         if(is_string($listAdmins)) {
             $data['content']['error_msg'] = $listAdmins;
         } else {
             $data['content']['listAdmins'] = $listAdmins;
         }
-
-        $data['content']['error_msg'] = $this->model->flashErrorMessage();
-        $data['content']['success_msg'] = $this->model->flashSuccessMessage();
 
         $this->useTemplate($data);
         $this->view->render('app/views/view_admins.php', $data);
@@ -55,6 +55,8 @@ class Controller_Admins extends Controller
 
     function edit(int $adminId)
     {
+        $data['content']['error_msg'] = $this->model->flashErrorMessage();
+
         $admin = $this->model->getAdmin($adminId);
         if(empty($admin)) {
             $data['content']['error_msg'] = "Ошибка получения данных.";
@@ -62,8 +64,6 @@ class Controller_Admins extends Controller
             $data['content']['login'] = $admin['login'];
             $data['content']['flags'] = $admin['flags'];
         }
-
-        $data['content']['error_msg'] = $this->model->flashErrorMessage();
 
         $this->useTemplate($data);
         $this->view->render('app/views/view_admins_edit.php', $data);
@@ -105,7 +105,7 @@ class Controller_Admins extends Controller
         $this->view->render('app/views/view_admins_delete.php', $data);
     }
 
-    function postDelete(int $adminId)
+    #[NoReturn] function postDelete(int $adminId)
     {
         $result = $this->model->deleteAdmin($adminId);
         if($result === true) {

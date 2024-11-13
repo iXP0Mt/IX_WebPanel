@@ -1,9 +1,17 @@
-<?php
-var_dump($data['content']);
-?>
-
 <div class="container mt-5">
     <h1>Управление плагинами</h1>
+    <?php
+    if(!empty($data['content']['error_msg'])) { ?>
+        <div class="alert alert-danger mb-3">
+            <?= $data['content']['error_msg'] ?>
+        </div>
+    <?php } ?>
+    <?php
+    if(!empty($data['content']['success_msg'])) { ?>
+        <div class="alert alert-success mb-3">
+            <?= $data['content']['success_msg'] ?>
+        </div>
+    <?php } ?>
     <table class="table table-sm">
         <thead>
         <tr>
@@ -26,7 +34,7 @@ var_dump($data['content']);
         $listInitPlugins = $data['content']['init_plugins'] ?? [];
         foreach ($listInitPlugins as $plugin): ?>
             <tr>
-                <td><?= $plugin['tech_name'] ?></td>
+                <td><?= $plugin['techName'] ?></td>
                 <td><?= $plugin['name'] ?></td>
                 <td><?= $plugin['enabled'] ?></td>
             </tr>
