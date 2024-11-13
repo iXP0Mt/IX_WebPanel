@@ -200,4 +200,30 @@ class Database
             return null;
         }
     }
+
+    /**
+     * Получает список плагинов, которые занесены в базу данных
+     *
+     * @return array|null
+     */
+    public static function selectPlugins(): ?array
+    {
+        try {
+            $stmt = self::pdo()->prepare("SELECT * FROM WP_Modules");
+            $stmt->execute();
+
+            $plugins = [];
+            if ($stmt->rowCount() > 0) {
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $row['settings'] = json_decode($row['settings'], true);
+                    $plugins[] = $row;
+                }
+            }
+        } catch (PDOException $e) {
+            error_log("ERROR: selectAdmins" . $e->getMessage());
+            return null;
+        }
+
+        return $plugins;
+    }
 }

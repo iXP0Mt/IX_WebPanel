@@ -1,6 +1,17 @@
 RewriteEngine On
 
+# Блокируем доступ ко всем .php файлам, кроме index.php
+RewriteCond %{THE_REQUEST} "\.php" [NC]
+RewriteCond %{REQUEST_URI} !/index\.php$ [NC]
+RewriteRule ^ - [F,L]
+
+# Проверка на существование файла или директории
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 
+# Перенаправление всех запросов на index.php
 RewriteRule ^(.*)$ index.php [QSA,L]
+
+# Отключаем отображение содержимого директорий
+Options -Indexes
+

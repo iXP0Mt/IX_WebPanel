@@ -15,7 +15,8 @@ $router->post('/login', Controller_Login::class, 'login');
 $router->get('/registration', Controller_Registration::class, 'index');
 $router->post('/registration', Controller_Registration::class, 'registration');
 
-$router->get('/plugins/:idPlugin/...', Controller_Plugin::class, 'index');
+$router->get('/plugin', Controller_Plugin::class, 'index');
+$router->get('/plugin/:idPlugin/...', Controller_Plugin::class, 'null');
 
 $router->get('/admins', Controller_Admins::class, 'index');
 $router->get('/admins/add', Controller_Admins::class, 'add');

@@ -29,7 +29,7 @@
                     <a class="nav-link" href="/admins">Управление админами</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/plugin-management">Управление плагинами</a>
+                    <a class="nav-link" href="/plugin">Управление плагинами</a>
                 </li>
             <?php } ?>
             <li class="nav-item">

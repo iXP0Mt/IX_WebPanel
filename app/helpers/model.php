@@ -84,4 +84,40 @@ class Model extends Database
 
         return null;
     }
+
+    protected function getListPluginsFromDir(): ?array
+    {
+        $pluginsPath = $_SERVER['DOCUMENT_ROOT'].'/plugins';
+        var_dump($pluginsPath);
+
+        if(!is_dir($pluginsPath)) return null;
+
+        $listPlugins = scandir($pluginsPath);
+        if($listPlugins === false) return null;
+
+        $listPlugins = array_slice($listPlugins, 2);
+
+        var_dump($listPlugins);
+
+        $plugins = [];
+
+        foreach ($listPlugins as $plugin) {
+            $dirPath = $pluginsPath.'/'.$plugin;
+            if(!is_dir($dirPath)) continue;
+
+            $pluginConfigPath = $pluginsPath.'/'.$plugin.'/config.json';
+            if(!file_exists($pluginConfigPath)) continue;
+
+            $configJson = json_decode(file_get_contents($pluginConfigPath), true);
+            if(
+                !isset($configJson['tech_name']) ||
+                !isset($configJson['name']) ||
+                !isset($configJson['version'])
+            ) continue;
+
+            $plugins[] = $configJson;
+        }
+        var_dump($plugins);
+        return $plugins;
+    }
 }
