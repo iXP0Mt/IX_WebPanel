@@ -137,9 +137,6 @@ class Controller_Plugin extends Controller
 
     #[NoReturn] function postEdit(int $pluginId)
     {
-        var_dump($pluginId);
-        var_dump($_POST);
-
         $result = $this->model->complexCheckInitPlugin($pluginId);
         if($result !== true) {
             $this->model->flashErrorMessage($result);
@@ -150,6 +147,12 @@ class Controller_Plugin extends Controller
         $plugin = $this->model->getPluginById($pluginId);
         if($plugin === null) {
             $this->model->flashErrorMessage("Ошибка получения плагина из базы данных.");
+            header("Location: /plugin/edit/$pluginId");
+            exit;
+        }
+
+        $result = $this->model->processToggleButton($pluginId, $plugin['enabled']);
+        if($result === true) {
             header("Location: /plugin/edit/$pluginId");
             exit;
         }

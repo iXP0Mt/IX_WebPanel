@@ -233,4 +233,18 @@ class Model_Plugin extends Model
             settings: $settingsJson
         );
     }
+
+    /**
+     * Обработать кнопку переключения плагина.
+     *
+     * @return bool Вернёт true, если действительно была нажата кнопка. Иначе false.
+     */
+    function processToggleButton(int $pluginId, int $currentState): bool
+    {
+        if(!isset($_POST['action'])) {
+            return false;
+        }
+
+        return self::updatePluginById(pluginId: $pluginId, enabled: $currentState ? 0 : 1) ?? false;
+    }
 }

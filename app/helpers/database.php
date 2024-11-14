@@ -321,14 +321,14 @@ class Database
             empty($name) &&
             empty($version) &&
             empty($settings) &&
-            empty($enabled)
+            $enabled === null
         ) return null;
 
         $qParts = [];
         if(!empty($name)) $qParts[] = "name = '$name'";
         if(!empty($version)) $qParts[] = "version = '$version'";
         if(!empty($settings)) $qParts[] = "settings = '$settings'";
-        if(!empty($enabled)) $qParts[] = "enabled = '$enabled'";
+        if($enabled !== null) $qParts[] = "enabled = '$enabled'";
         $query = "UPDATE WP_Modules SET ".implode(', ', $qParts)." WHERE id = '$pluginId'";
 
         try {

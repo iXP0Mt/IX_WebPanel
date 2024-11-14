@@ -1,7 +1,7 @@
 <div class="container mt-5">
     <h1>Изменение плагина</h1>
     <?php
-    if(!empty($data['content']['error_msg'])) { ?>
+    if (!empty($data['content']['error_msg'])) { ?>
         <div class="alert alert-danger mb-3">
             <?= $data['content']['error_msg'] ?>
         </div>
@@ -11,6 +11,13 @@
     if (empty($plugin)) { ?>
         <div>Ошибка загрузки плагина</div>
     <?php } else { ?>
+    <form method="post">
+        <?php if ($plugin['enabled']) { ?>
+            <button type="submit" name="action" class="btn btn-danger">Выключить</button>
+        <?php } else { ?>
+            <button type="submit" name="action" class="btn btn-success">Включить</button>
+        <?php } ?>
+    </form>
     <p><b>Техническое название:</b> <?= $plugin['tech_name'] ?? null ?></p>
     <p><b>Версия:</b> <?= $plugin['version'] ?? null ?></p>
     <form method="post">
@@ -23,9 +30,11 @@
         foreach ($settings as $key => $setting): ?>
             <div class="mb-3">
                 <label for="<?= $key ?>"><?= $setting['description'] ?></label>
-                <input type="text" class="form-control" name="<?= $key ?>" maxlength="32" value="<?= $setting['value'] ?>" oninput="validateInputFlags(this)">
+                <input type="text" class="form-control" name="<?= $key ?>" maxlength="32"
+                       value="<?= $setting['value'] ?>" oninput="validateInputFlags(this)">
             </div>
-        <?php endforeach; } ?>
+        <?php endforeach;
+        } ?>
         <button type="submit" class="btn btn-primary">Далее</button>
     </form>
 </div>
