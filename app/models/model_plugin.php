@@ -70,10 +70,31 @@ class Model_Plugin extends Model
         return $this->getListPluginsFromDir($techName);
     }
 
-
-
+    /**
+     * Проверяет POST параметры в соответствии с требуемыми параметрами.
+     *
+     *
+     * В частности здесь проверяются соответствие всех настроек плагина.
+     *
+     * @param array $requiredSettings
+     * @return bool|string Возвращает true, если всё успешно. Иначе сообщение с ошибкой.
+     */
     function validatePost2(array $requiredSettings): bool|string
     {
+        if(!isset($_POST['name'])) {
+            return 'Поле названия должно быть заполнено';
+        }
+
+        $name = trim($_POST['name']);
+
+        if(empty($name)) {
+            return 'Поле названия должно быть заполнено';
+        }
+
+        if (strlen($name) > 128) {
+            return "Название не более 128 символов.";
+        }
+
         foreach ($requiredSettings as $setting => $desc) {
             if(!isset($_POST[$setting])) {
                 return "Ошибка чтения настроек доступов (флагов).";
@@ -160,11 +181,11 @@ class Model_Plugin extends Model
         return true;
     }
 
-    function mergeInfosPlugin(array $pluginDatabase, array $pluginDir): array
+    private function mergeInfosPlugin(array $pluginDatabase, array $pluginDir): array
     {
         $result = [
             'tech_name' => $pluginDir['tech_name'],
-            'name' => $pluginDir['name'],
+            'name' => $pluginDatabase['name'],
             'version' => $pluginDir['version'],
             'dir' => $pluginDir['dir'],
             'enabled' => $pluginDatabase['enabled']
@@ -195,5 +216,21 @@ class Model_Plugin extends Model
     {
         $plugin = $this->getListPluginsFromDir($techName);
         return !!($plugin) ?? null;
+    }
+
+    function editPlugin(int $pluginId, array $dataPost): ?bool
+    {
+        $name = $dataPost['name'];
+        unset($dataPost['name']);
+        $settings = $dataPost;
+
+        $settingsJson = json_encode($settings, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        if($settingsJson === false) return null;
+
+        return self::updatePluginById(
+            pluginId: $pluginId,
+            name: $name,
+            settings: $settingsJson
+        );
     }
 }

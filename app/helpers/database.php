@@ -305,4 +305,38 @@ class Database
 
         return $plugin;
     }
+
+    /**
+     * Изменяет плагин в базе данных по входящим параметрам.
+     *
+     * @param int $pluginId
+     * @param string|null $name
+     * @param string|null $version
+     * @param string|null $settings
+     * @return bool|null Возвращает null если входящие параметры не заданы или ошибка.
+     */
+    public static function updatePluginById(int $pluginId, string $name = null, string $version = null, string $settings = null, int $enabled = null): ?bool
+    {
+        if(
+            empty($name) &&
+            empty($version) &&
+            empty($settings) &&
+            empty($enabled)
+        ) return null;
+
+        $qParts = [];
+        if(!empty($name)) $qParts[] = "name = '$name'";
+        if(!empty($version)) $qParts[] = "version = '$version'";
+        if(!empty($settings)) $qParts[] = "settings = '$settings'";
+        if(!empty($enabled)) $qParts[] = "enabled = '$enabled'";
+        $query = "UPDATE WP_Modules SET ".implode(', ', $qParts)." WHERE id = '$pluginId'";
+
+        try {
+            $stmt = self::pdo()->prepare($query);
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            error_log("ERROR: updatePluginById" . $e->getMessage());
+            return null;
+        }
+    }
 }

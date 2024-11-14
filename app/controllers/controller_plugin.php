@@ -106,7 +106,7 @@ class Controller_Plugin extends Controller
 
         $plugin = $this->model->getPluginById($pluginId);
         if($plugin === null) {
-            $this->model->flashErrorMessage("Операция добавления плагина в базу данных была выполнена, но получить получить новый плагин не получилось.");
+            $this->model->flashErrorMessage("Операция добавления плагина в базу данных была выполнена, но получить новый плагин не получилось.");
             header("Location: /plugin/init/$pluginTechName");
             exit;
         }
@@ -126,9 +126,55 @@ class Controller_Plugin extends Controller
             exit;
         }
 
+        $data['content']['error_msg'] = $this->model->flashErrorMessage();
+        $data['content']['success_msg'] = $this->model->flashSuccessMessage();
+
         $data['content']['plugin'] = $plugin;
 
         $this->useTemplate($data);
         $this->view->render("app/views/view_plugin_edit.php", $data);
+    }
+
+    #[NoReturn] function postEdit(int $pluginId)
+    {
+        var_dump($pluginId);
+        var_dump($_POST);
+
+        $result = $this->model->complexCheckInitPlugin($pluginId);
+        if($result !== true) {
+            $this->model->flashErrorMessage($result);
+            header("Location: /plugin/edit/$pluginId");
+            exit;
+        }
+
+        $plugin = $this->model->getPluginById($pluginId);
+        if($plugin === null) {
+            $this->model->flashErrorMessage("Ошибка получения плагина из базы данных.");
+            header("Location: /plugin/edit/$pluginId");
+            exit;
+        }
+
+        $resultValidate = $this->model->validatePost2($plugin['settings']);
+        if($resultValidate !== true) {
+            $this->model->flashErrorMessage($resultValidate);
+            header("Location: /plugin/edit/$pluginId");
+            exit;
+        }
+
+        $result = $this->model->editPlugin($pluginId, $_POST);
+        if($result === null) {
+            $this->model->flashErrorMessage("Ошибка изменения плагина.");
+            header("Location: /plugin/edit/$pluginId");
+            exit;
+        }
+        if($result === false) {
+            $this->model->flashErrorMessage("Плагин не был изменён.");
+            header("Location: /plugin/edit/$pluginId");
+            exit;
+        }
+
+        $this->model->flashSuccessMessage("Плагин был успешно изменён.");
+        header("Location: /plugin");
+        exit;
     }
 }

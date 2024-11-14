@@ -13,8 +13,11 @@
     <?php } else { ?>
     <p><b>Техническое название:</b> <?= $plugin['tech_name'] ?? null ?></p>
     <p><b>Версия:</b> <?= $plugin['version'] ?? null ?></p>
-    <p><b>Название плагина:</b> <?= $plugin['name'] ?? null ?></p>
-    <form action="" method="post">
+    <form method="post">
+        <div class="mb-3">
+            <label for="name" class="form-label"><b>Название плагина:</b></label>
+            <input type="text" class="form-control" id="name" name="name" value="<?= $plugin['name'] ?? '' ?>" required>
+        </div>
         <?php
         $settings = $plugin['settings'];
         foreach ($settings as $key => $setting): ?>
