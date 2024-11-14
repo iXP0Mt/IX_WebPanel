@@ -17,7 +17,7 @@
         <tr>
             <th>Модуль</th>
             <th>Название</th>
-            <th>Статус</th>
+            <th colspan="2">Статус</th>
         </tr>
         </thead>
         <tbody>
@@ -36,7 +36,32 @@
             <tr>
                 <td><?= $plugin['techName'] ?></td>
                 <td><?= $plugin['name'] ?></td>
-                <td><?= $plugin['enabled'] ?></td>
+                <?php
+                switch ($plugin['enabled']) {
+                    case 0: {
+                        $str = "OFF";
+                        $color = 'text-danger';
+                        $manageable = true;
+                        break;
+                    }
+                    case 1: {
+                        $str = "ON";
+                        $color = "text-success";
+                        $manageable = true;
+                        break;
+                    }
+                    default: {
+                        $str = $plugin['enabled'];
+                        $color = 'text-danger';
+                        $manageable = false;
+                        break;
+                    }
+                }
+                ?>
+                <td class="<?= $color ?>"><?= $str ?></td>
+                <?php if($manageable) { ?>
+                    <td><a href="/plugin/edit/<?= $plugin['id'] ?>">Изменение</a></td>
+                <?php } ?>
             </tr>
         <?php endforeach; ?>
         </tbody>

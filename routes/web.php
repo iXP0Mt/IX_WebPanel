@@ -18,6 +18,7 @@ $router->post('/registration', Controller_Registration::class, 'registration');
 $router->get('/plugin', Controller_Plugin::class, 'index');
 $router->get('/plugin/init/:pluginTechName', Controller_Plugin::class, 'init');
 $router->post('/plugin/init/:pluginTechName', Controller_Plugin::class, 'postInit');
+$router->get('/plugin/edit/:pluginId', Controller_Plugin::class, 'edit');
 $router->get('/plugin/:idPlugin/...', Controller_Plugin::class, 'null');
 
 $router->get('/admins', Controller_Admins::class, 'index');

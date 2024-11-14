@@ -253,6 +253,15 @@ class Database
         return $plugin;
     }
 
+    /**
+     * Создаёт новую запись о плагине в базу данных, возвращая ID созданной записи.
+     *
+     * @param string $techName
+     * @param string $name
+     * @param string $version
+     * @param string $settings
+     * @return int|null Возвращает ID нового плагина, null если ошибка.
+     */
     public static function insertPlugin(string $techName, string $name, string $version, string $settings): ?int
     {
         try {
@@ -271,6 +280,12 @@ class Database
         return null;
     }
 
+    /**
+     * Получает информацию о плагине по его ID в базе данных.
+     *
+     * @param int $id
+     * @return array|null
+     */
     public static function selectPluginById(int $id): ?array
     {
         try {
@@ -281,6 +296,7 @@ class Database
             $plugin = [];
             if ($stmt->rowCount()) {
                 $plugin = $stmt->fetch(PDO::FETCH_ASSOC);
+                $plugin['settings'] = json_decode($plugin['settings'], true);
             }
         } catch (PDOException $e) {
             error_log("ERROR: selectPluginById" . $e->getMessage());

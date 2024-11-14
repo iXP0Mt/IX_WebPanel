@@ -3,6 +3,7 @@
 namespace routes;
 
 use app\helpers\Middleware_Auth;
+use TypeError;
 
 class Router
 {
@@ -89,10 +90,15 @@ class Router
                 die;
             }
 
-            if(call_user_func_array([$controllerClass, $route['action']], $params) === false) {
-                echo "ОШИБКА ВЫЗОВА МЕТОДА";
-                die;
+            try {
+                if(call_user_func_array([$controllerClass, $route['action']], $params) === false) {
+                    echo "ОШИБКА ВЫЗОВА МЕТОДА";
+                    die;
+                }
+            } catch (TypeError $e) {
+                die("Либо Вы игрались с URL, либо косяк разработчика.");
             }
+
             return;
         }
 

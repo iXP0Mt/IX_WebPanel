@@ -67,27 +67,10 @@ class Model_Plugin extends Model
 
     function getPluginFromDir(string $techName): ?array
     {
-        $listPlugins = $this->getListPluginsFromDir();
-        if($listPlugins === null) return null;
-
-        foreach ($listPlugins as $plugin) {
-            if($plugin['tech_name'] == $techName) {
-                return $plugin;
-            }
-        }
-
-        return [];
+        return $this->getListPluginsFromDir($techName);
     }
 
-    function isPluginExistInDatabase(string $techName): ?bool
-    {
-        $plugin = self::selectPluginByTechName($techName);
-        if($plugin === null) return null;
 
-        if(empty($plugin)) return false;
-
-        return true;
-    }
 
     function validatePost2(array $requiredSettings): bool|string
     {
@@ -140,5 +123,77 @@ class Model_Plugin extends Model
     function getPluginById(int $id): ?array
     {
         return self::selectPluginById($id);
+    }
+
+    /**
+     * Комплексная проверка инициализированного плагина.
+     * 1. Проверка, что плагин есть в базе данных.
+     * 2. Проверка, что плагина есть в локальной директории.
+     * 3. Версии локального плагина и плагина из БД совпадают.
+     *
+     * Если задан $plugin, то запишет в него плагин с объединенной информацией из БД и локальной директории.
+     *
+     * @param int $id
+     * @param array|null $plugin Возвращает сюда плагин при успешной проверке.
+     * @return string|bool Возвращает true если плагин успешно проверен. String сообщение с ошибкой.
+     */
+    function complexCheckInitPlugin(int $id, array &$plugin = null): string|bool
+    {
+        /*
+        При получении плагина с базы данных проверяем его что он валидный, а именно:
+        - Такой плагин есть в БД
+        - Такой плагин есть в локальной папке
+        - Версии плагинов совпадают
+        */
+        $pluginDatabase = self::selectPluginById($id);
+        if($pluginDatabase === null) return "Ошибка получения плагина из базы данных.";
+        if(empty($pluginDatabase)) return "Плагин не найден в базе данных.";
+
+        $pluginDir = $this->getPluginFromDir($pluginDatabase['techName']);
+        if($pluginDir === null) return "Ошибка получения плагина из локальной директории.";
+        if(empty($pluginDir)) return "Плагин не найден в локальной директории.";
+
+        if($pluginDatabase['version'] != $pluginDir['version']) return "Версии плагинов не совпадают";
+
+        if($plugin !== null) $plugin = $this->mergeInfosPlugin($pluginDatabase, $pluginDir);
+
+        return true;
+    }
+
+    function mergeInfosPlugin(array $pluginDatabase, array $pluginDir): array
+    {
+        $result = [
+            'tech_name' => $pluginDir['tech_name'],
+            'name' => $pluginDir['name'],
+            'version' => $pluginDir['version'],
+            'dir' => $pluginDir['dir'],
+            'enabled' => $pluginDatabase['enabled']
+        ];
+
+        foreach ($pluginDir['settings'] as $key => $description) {
+            $result['settings'][$key] = [
+                'description' => $description,
+                'value' => $pluginDatabase['settings'][$key]
+            ];
+        }
+
+        return $result;
+    }
+
+    function isPluginExistInDatabase(mixed $determinant): ?bool
+    {
+        if(is_int($determinant))
+            $result = self::selectPluginById($determinant);
+        else if (is_string($determinant))
+            $result = self::selectPluginByTechName($determinant);
+        else return null;
+
+        return !!($result) ?? null;
+    }
+
+    function isPluginExistInDir(string $techName): ?bool
+    {
+        $plugin = $this->getListPluginsFromDir($techName);
+        return !!($plugin) ?? null;
     }
 }

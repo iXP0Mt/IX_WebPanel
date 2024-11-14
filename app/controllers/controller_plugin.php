@@ -2,6 +2,7 @@
 
 use app\helpers\Controller;
 use app\helpers\View;
+use JetBrains\PhpStorm\NoReturn;
 
 class Controller_Plugin extends Controller
 {
@@ -67,7 +68,7 @@ class Controller_Plugin extends Controller
         //include "plugins/$dirName/index.php";
     }
 
-    function postInit(string $pluginTechName)
+    #[NoReturn] function postInit(string $pluginTechName)
     {
         $plugin = $this->model->getPluginFromDir($pluginTechName);
         if($plugin === null) {
@@ -113,5 +114,21 @@ class Controller_Plugin extends Controller
         $this->model->flashSuccessMessage('Плагин '.$plugin['name'].' успешно инициализирован.');
         header("Location: /plugin");
         exit;
+    }
+
+    function edit(int $pluginId)
+    {
+        $plugin = [];
+        $result = $this->model->complexCheckInitPlugin($pluginId, $plugin);
+        if($result !== true) {
+            $this->model->flashErrorMessage($result);
+            header("Location: /plugin");
+            exit;
+        }
+
+        $data['content']['plugin'] = $plugin;
+
+        $this->useTemplate($data);
+        $this->view->render("app/views/view_plugin_edit.php", $data);
     }
 }

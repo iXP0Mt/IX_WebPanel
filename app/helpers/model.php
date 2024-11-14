@@ -85,7 +85,14 @@ class Model extends Database
         return null;
     }
 
-    protected function getListPluginsFromDir(): ?array
+    /**
+     * Получает все плагины из локальной директории.
+     * Если указан $techName, то пробует получить плагин с таким техническим названием.
+     *
+     * @param string|null $techName
+     * @return array|null
+     */
+    protected function getListPluginsFromDir(string $techName = null): ?array
     {
         $pluginsPath = $_SERVER['DOCUMENT_ROOT'].'/plugins';
 
@@ -114,6 +121,11 @@ class Model extends Database
             ) continue;
 
             $configJson['dir'] = $file;
+
+            if($techName !== null) {
+                if($techName == $configJson['tech_name']) return $configJson;
+                else continue;
+            }
 
             $plugins[] = $configJson;
         }
