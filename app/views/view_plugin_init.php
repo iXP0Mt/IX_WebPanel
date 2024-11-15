@@ -1,7 +1,3 @@
-<?php
-//include 'plugins/'.$data['content'][''].'/index.php';
-?>
-
 <div class="container mt-5">
     <h1>Инициализация плагина</h1>
     <?php

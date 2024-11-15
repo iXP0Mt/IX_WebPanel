@@ -47,12 +47,11 @@
                 <h4>Модули</h4>
                 <ul class="nav flex-column">
                     <?php
-                    //$listInitPlugins = ModelTemplate::getInitPlugins();
-                    $listInitPlugins = [];
-                    foreach ($listInitPlugins as $plugin) {
+                    $listPlugins = $data['template']['plugins'] ?? [];
+                    foreach ($listPlugins as $plugin) {
                         ?>
                         <li class="nav-item">
-                            <a class="nav-link active" href="/plugin?name=<?= $plugin['techName']; ?>">
+                            <a class="nav-link active" href="/plugin/<?= $plugin['id']; ?>">
                                 <?php echo $plugin['name']; ?>
                             </a>
                         </li>

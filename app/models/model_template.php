@@ -20,4 +20,9 @@ class Model_Template extends Model
 
         return false;
     }
+
+    function getInitPlugins(): array
+    {
+        return self::selectPluginsByEnabled() ?? [];
+    }
 }

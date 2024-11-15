@@ -28,5 +28,6 @@ class Controller
         $templateModel = new Model_Template();
 
         $data['template']['isVisibleItems'] = $templateModel->isVisibleMainAdminItems();
+        $data['template']['plugins'] = $templateModel->getInitPlugins();
     }
 }

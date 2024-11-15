@@ -154,7 +154,7 @@ class Model_Plugin extends Model
      *
      * Если задан $plugin, то запишет в него плагин с объединенной информацией из БД и локальной директории.
      *
-     * @param int $id
+     * @param int $id ID Плагина
      * @param array|null $plugin Возвращает сюда плагин при успешной проверке.
      * @return string|bool Возвращает true если плагин успешно проверен. String сообщение с ошибкой.
      */

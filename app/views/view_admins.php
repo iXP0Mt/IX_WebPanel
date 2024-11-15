@@ -1,5 +1,5 @@
 <div class="container mt-5">
-    <h1>Управление админами</h1>
+    <h1>Управление админами панели</h1>
     <?php
     if(!empty($data['content']['error_msg'])) { ?>
         <div class="alert alert-danger mb-3">

@@ -20,7 +20,7 @@ $router->get('/plugin/init/:pluginTechName', Controller_Plugin::class, 'init');
 $router->post('/plugin/init/:pluginTechName', Controller_Plugin::class, 'postInit');
 $router->get('/plugin/edit/:pluginId', Controller_Plugin::class, 'edit');
 $router->post('/plugin/edit/:pluginId', Controller_Plugin::class, 'postEdit');
-$router->get('/plugin/:idPlugin/...', Controller_Plugin::class, 'null');
+$router->get('/plugin/:pluginId/...', Controller_Plugin::class, 'viewPlugin');
 
 $router->get('/admins', Controller_Admins::class, 'index');
 $router->get('/admins/add', Controller_Admins::class, 'add');

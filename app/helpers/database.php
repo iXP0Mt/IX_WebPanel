@@ -227,6 +227,28 @@ class Database
         return $plugins;
     }
 
+    public static function selectPluginsByEnabled(bool $enabled = true): ?array
+    {
+        try {
+            $stmt = self::pdo()->prepare("SELECT * FROM WP_Modules WHERE enabled = :enabled");
+            $stmt->bindValue(':enabled', $enabled, PDO::PARAM_BOOL);
+            $stmt->execute();
+
+            $plugins = [];
+            if ($stmt->rowCount() > 0) {
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $row['settings'] = json_decode($row['settings'], true);
+                    $plugins[] = $row;
+                }
+            }
+        } catch (PDOException $e) {
+            error_log("ERROR: selectPluginsByEnabled" . $e->getMessage());
+            return null;
+        }
+
+        return $plugins;
+    }
+
     /**
      * Получает плагин по его техническому названию.
      *

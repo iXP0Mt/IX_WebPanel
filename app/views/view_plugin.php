@@ -60,7 +60,7 @@
                 ?>
                 <td class="<?= $color ?>"><?= $str ?></td>
                 <?php if($manageable) { ?>
-                    <td><a href="/plugin/edit/<?= $plugin['id'] ?>">Изменение</a></td>
+                    <td><a href="/plugin/edit/<?= $plugin['id'] ?>">Управление</a></td>
                 <?php } ?>
             </tr>
         <?php endforeach; ?>
